@@ -32,19 +32,19 @@ bar, dark theme, and smart search features.
 
 ## 🚀 How to Run
 
-> Clone the repository, install dependencies and run .py
+> OPT A) Clone the repository, install dependencies and run .py
 
 ``` bash
 bin/GrepWithPowershell.py
 ```
 
-> Build it by yourself
+> OPT B) Build it by yourself
 
 ``` bash
 pyinstaller --noconsole --onefile --icon=icon.ico <NAMEOFPYFILE>.py
 ```
 
-> Download and run exe
+> OPT C) Download and run exe
 
 ``` bash
 bin/GrepWithPowershell.exe
@@ -81,5 +81,6 @@ You can modify these settings inside the UI:
 -   🔎 Regex-based search\
 -   🌗 Optional light/dark themes\
 -   🪟 Multi-tab interface for multiple searches
+
 
 
