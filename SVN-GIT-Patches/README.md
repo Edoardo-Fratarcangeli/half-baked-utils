@@ -17,6 +17,15 @@
 
 ---
 
+------------------------------------------------------------------------
+
+## 🖼️ Screenshot
+
+> Example:\
+> ![Preview](preview.jpg)
+
+------------------------------------------------------------------------
+
 ## Installation
 
 ### Prerequisites
@@ -85,4 +94,5 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 ## Contact
 
 Created by **[Your Name]** – feel free to reach out via GitHub issues or email.
+
 
