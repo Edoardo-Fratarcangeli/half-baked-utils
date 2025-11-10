@@ -1,0 +1,32 @@
+Windows Registry Editor Version 5.00
+
+; --------------------------
+; Open CMD here as Administrator
+; --------------------------
+
+; Right-click on folder
+[HKEY_CLASSES_ROOT\Directory\shell\runas]
+@="CMD Admin"
+"HasLUAShield"=""
+"Icon"="C:\\Windows\\System32\\cmd.exe"
+
+[HKEY_CLASSES_ROOT\Directory\shell\runas\command]
+@="cmd.exe /k cd /d \"%1\""
+
+; Right-click on folder background
+[HKEY_CLASSES_ROOT\Directory\Background\shell\runas]
+@="CMD Admin"
+"HasLUAShield"=""
+"Icon"="C:\\Windows\\System32\\cmd.exe"
+
+[HKEY_CLASSES_ROOT\Directory\Background\shell\runas\command]
+@="cmd.exe /k cd /d \"%V\""
+
+; Right-click on drive (C:, D:, etc.)
+[HKEY_CLASSES_ROOT\Drive\shell\runas]
+@="CMD Admin"
+"HasLUAShield"=""
+"Icon"="C:\\Windows\\System32\\cmd.exe"
+
+[HKEY_CLASSES_ROOT\Drive\shell\runas\command]
+@="cmd.exe /k cd /d \"%1\""

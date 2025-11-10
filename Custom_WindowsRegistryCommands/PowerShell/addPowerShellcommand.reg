@@ -1,0 +1,29 @@
+Windows Registry Editor Version 5.00
+
+; --------------------------
+; Open PowerShell here
+; --------------------------
+
+; Right-click on folder
+[HKEY_CLASSES_ROOT\Directory\shell\PWSHCommand]
+@="PowerShell"
+"Icon"="C:\\Program Files\\PowerShell\\7\\pwsh.exe"
+
+[HKEY_CLASSES_ROOT\Directory\shell\PWSHCommand\command]
+@="\"C:\\Program Files\\PowerShell\\7\\pwsh.exe\" -NoExit -Command Set-Location -LiteralPath '%1'"
+
+; Right-click on folder background
+[HKEY_CLASSES_ROOT\Directory\Background\shell\PWSHCommand]
+@="PowerShell"
+"Icon"="C:\\Program Files\\PowerShell\\7\\pwsh.exe"
+
+[HKEY_CLASSES_ROOT\Directory\Background\shell\PWSHCommand\command]
+@="\"C:\\Program Files\\PowerShell\\7\\pwsh.exe\" -NoExit -Command Set-Location -LiteralPath '%V'"
+
+; Right-click on drive (C:, D:, etc.)
+[HKEY_CLASSES_ROOT\Drive\shell\PWSHCommand]
+@="PowerShell"
+"Icon"="C:\\Program Files\\PowerShell\\7\\pwsh.exe"
+
+[HKEY_CLASSES_ROOT\Drive\shell\PWSHCommand\command]
+@="\"C:\\Program Files\\PowerShell\\7\\pwsh.exe\" -NoExit -Command Set-Location -LiteralPath '%1'"

@@ -1,0 +1,55 @@
+Windows Registry Editor Version 5.00
+
+; =========================================================
+; GIT COMMANDS IN WINDOWS CONTEXT MENU (cmd.exe)
+; =========================================================
+
+; --------------------------
+; Git Status
+; --------------------------
+[HKEY_CLASSES_ROOT\Directory\shell\GitStatus]
+@="Git Status"
+"Icon"="C:\\Program Files\\Git\\mingw64\\share\\git\\git-for-windows.ico"
+
+[HKEY_CLASSES_ROOT\Directory\shell\GitStatus\command]
+@="cmd.exe /k cd /d \"%1\" && git status"
+
+; --------------------------
+; Git Log
+; --------------------------
+[HKEY_CLASSES_ROOT\Directory\shell\GitLog]
+@="Git Log"
+"Icon"="C:\\Program Files\\Git\\mingw64\\share\\git\\git-for-windows.ico"
+
+[HKEY_CLASSES_ROOT\Directory\shell\GitLog\command]
+@="cmd.exe /k cd /d \"%1\" && git log --oneline"
+
+; --------------------------
+; Git Pull
+; --------------------------
+[HKEY_CLASSES_ROOT\Directory\shell\GitPullSmart]
+@="Git Pull"
+"Icon"="C:\\Program Files\\Git\\mingw64\\share\\git\\git-for-windows.ico"
+
+[HKEY_CLASSES_ROOT\Directory\shell\GitPullSmart\command]
+@="cmd.exe /k cd /d \"%1\" && git pull"
+
+; --------------------------
+; Git Push
+; --------------------------
+[HKEY_CLASSES_ROOT\Directory\shell\GitPush]
+@="Git Push"
+"Icon"="C:\\Program Files\\Git\\mingw64\\share\\git\\git-for-windows.ico"
+
+[HKEY_CLASSES_ROOT\Directory\shell\GitPush\command]
+@="cmd.exe /k cd /d \"%1\" && git push"
+
+; --------------------------
+; Git Add + Commit (manual message)
+; --------------------------
+[HKEY_CLASSES_ROOT\Directory\shell\GitCommit]
+@="Git Add Then Commit"
+"Icon"="C:\\Program Files\\Git\\mingw64\\share\\git\\git-for-windows.ico"
+
+[HKEY_CLASSES_ROOT\Directory\shell\GitCommit\command]
+@="cmd.exe /k cd /d \"%1\" && git add . && git commit"

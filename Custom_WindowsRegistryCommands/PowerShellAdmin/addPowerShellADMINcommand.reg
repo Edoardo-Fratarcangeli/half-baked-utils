@@ -1,0 +1,32 @@
+Windows Registry Editor Version 5.00
+
+; --------------------------
+; Open PowerShell (pwsh) here as Administrator
+; --------------------------
+
+; Right-click on folder
+[HKEY_CLASSES_ROOT\Directory\shell\PWSHAdmin]
+@="PowerShell Admin"
+"HasLUAShield"=""
+"Icon"="C:\\Program Files\\PowerShell\\7\\pwsh.exe"
+
+[HKEY_CLASSES_ROOT\Directory\shell\PWSHAdmin\command]
+@="\"C:\\Program Files\\PowerShell\\7\\pwsh.exe\" -NoExit -Command Set-Location -LiteralPath '%1'"
+
+; Right-click on folder background
+[HKEY_CLASSES_ROOT\Directory\Background\shell\PWSHAdmin]
+@="PowerShell Admin"
+"HasLUAShield"=""
+"Icon"="C:\\Program Files\\PowerShell\\7\\pwsh.exe"
+
+[HKEY_CLASSES_ROOT\Directory\Background\shell\PWSHAdmin\command]
+@="\"C:\\Program Files\\PowerShell\\7\\pwsh.exe\" -NoExit -Command Set-Location -LiteralPath '%V'"
+
+; Right-click on drive (C:, D:, etc.)
+[HKEY_CLASSES_ROOT\Drive\shell\PWSHAdmin]
+@="PowerShell Admin"
+"HasLUAShield"=""
+"Icon"="C:\\Program Files\\PowerShell\\7\\pwsh.exe"
+
+[HKEY_CLASSES_ROOT\Drive\shell\PWSHAdmin\command]
+@="\"C:\\Program Files\\PowerShell\\7\\pwsh.exe\" -NoExit -Command Set-Location -LiteralPath '%1'"

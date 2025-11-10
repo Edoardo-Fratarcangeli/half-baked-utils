@@ -1,0 +1,29 @@
+Windows Registry Editor Version 5.00
+
+; --------------------------
+; Open CMD here
+; --------------------------
+
+; Right-click on folder
+[HKEY_CLASSES_ROOT\Directory\shell\CMDCommand]
+@="CMD"
+"Icon"="C:\\Windows\\System32\\cmd.exe"
+
+[HKEY_CLASSES_ROOT\Directory\shell\CMDCommand\command]
+@="cmd.exe /k cd /d \"%1\""
+
+; Right-click on folder background
+[HKEY_CLASSES_ROOT\Directory\Background\shell\CMDCommand]
+@="CMD"
+"Icon"="C:\\Windows\\System32\\cmd.exe"
+
+[HKEY_CLASSES_ROOT\Directory\Background\shell\CMDCommand\command]
+@="cmd.exe /k cd /d \"%V\""
+
+; Right-click on drive (C:, D:, etc.)
+[HKEY_CLASSES_ROOT\Drive\shell\CMDCommand]
+@="CMD"
+"Icon"="C:\\Windows\\System32\\cmd.exe"
+
+[HKEY_CLASSES_ROOT\Drive\shell\CMDCommand\command]
+@="cmd.exe /k cd /d \"%1\""
