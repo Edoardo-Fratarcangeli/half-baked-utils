@@ -34,7 +34,11 @@ bar, dark theme, and smart search features.
 
 > Clone the repository, install dependencies and run .py
 
-Or build it by yourself...
+``` bash
+bin/GrepWithPowershell.py
+```
+
+> Build it by yourself
 
 ``` bash
 pyinstaller --noconsole --onefile --icon=icon.ico <NAMEOFPYFILE>.py
@@ -78,8 +82,4 @@ You can modify these settings inside the UI:
 -   🌗 Optional light/dark themes\
 -   🪟 Multi-tab interface for multiple searches
 
-------------------------------------------------------------------------
 
-## 🧑‍💻 Author
-
-**Edoardo Fratarcangeli**\
