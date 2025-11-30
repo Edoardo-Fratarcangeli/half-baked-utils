@@ -3,7 +3,7 @@ import os
 from PyQt6.QtWidgets import (QApplication, QWidget, QPushButton, QLabel, QFileDialog, 
                              QVBoxLayout, QHBoxLayout, QMessageBox, QSpinBox)
 from PyQt6.QtGui import QPixmap, QImage, QPainter, QPen, QColor
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QSettings
 from PIL import Image
 from io import BytesIO
 
@@ -15,7 +15,10 @@ class ImageSplitter(QWidget):
         self.pixmap = None
         self.rows = 4
         self.cols = 4
+        self.output_dir = None
+        self.settings = QSettings("ImageSplitter", "config")
         self.init_ui()
+        self.load_settings()
 
     def init_ui(self):  
         layout = QVBoxLayout() 
@@ -61,16 +64,54 @@ class ImageSplitter(QWidget):
         layout.addWidget(self.label_folder)  
         layout.addWidget(self.btn_split) 
 
-        self.setLayout(layout)  
-        self.output_dir = None 
+        self.setLayout(layout) 
+
+    def load_settings(self):
+        """Load saved paths and settings from .ini file"""
+        self.image_path = self.settings.value("last_image_path", "")
+        self.output_dir = self.settings.value("last_output_dir", "")
+        self.rows = int(self.settings.value("rows", 4))
+        self.cols = int(self.settings.value("cols", 4))
+        
+        # Update spin boxes FIRST (triggers update_grid)
+        self.spin_rows.setValue(self.rows)
+        self.spin_cols.setValue(self.cols)
+        
+        # Update file labels
+        if self.image_path and os.path.exists(self.image_path):
+            self.label_file.setText(os.path.basename(self.image_path))
+            self.load_image()
+        else:
+            self.label_file.setText("No file selected")
+            
+        if self.output_dir and os.path.exists(self.output_dir):
+            self.label_folder.setText(self.output_dir)
+        else:
+            self.label_folder.setText("No folder selected")
+
+    def save_settings(self):
+        """Save paths and settings to .ini file"""
+        self.settings.setValue("last_image_path", self.image_path or "")
+        self.settings.setValue("last_output_dir", self.output_dir or "")
+        self.settings.setValue("rows", self.spin_rows.value())
+        self.settings.setValue("cols", self.spin_cols.value())
+
+    def closeEvent(self, event):
+        """Save settings when closing the app"""
+        self.save_settings()
+        event.accept()
 
     def select_file(self):  
-        file_path, _ = QFileDialog.getOpenFileName(self, "Select image", "", 
-                                                 "Image files (*.jpg *.jpeg *.png *.bmp *.tiff *.gif)")
+        start_dir = os.path.dirname(self.image_path) if self.image_path else ""
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "Select image", start_dir, 
+            "Image files (*.jpg *.jpeg *.png *.bmp *.tiff *.gif)"
+        )
         if file_path:  
             self.image_path = file_path  
             self.label_file.setText(os.path.basename(file_path))
             self.load_image()
+            self.save_settings()
 
     def load_image(self):
         try:
@@ -84,10 +125,12 @@ class ImageSplitter(QWidget):
                 580, 580, Qt.AspectRatioMode.KeepAspectRatio, 
                 Qt.TransformationMode.SmoothTransformation
             )
+            # Grid updates automatically via spin_rows/cols valueChanged signals
             self.update_grid()
             
         except Exception as e:
             QMessageBox.warning(self, "Error", f"Cannot load image: {str(e)}")
+            self.pixmap = None
 
     def update_grid(self):
         if self.pixmap is None:
@@ -95,6 +138,7 @@ class ImageSplitter(QWidget):
             
         self.rows = self.spin_rows.value()
         self.cols = self.spin_cols.value()
+        self.save_settings()  # Save rows/cols changes
         
         grid_pixmap = self.pixmap.copy()
         painter = QPainter(grid_pixmap)
@@ -105,10 +149,12 @@ class ImageSplitter(QWidget):
         w = grid_pixmap.width() / self.cols
         h = grid_pixmap.height() / self.rows
         
+        # Vertical lines
         for i in range(1, self.cols):
             x = int(i * w)
             painter.drawLine(x, 0, x, grid_pixmap.height())
         
+        # Horizontal lines
         for i in range(1, self.rows):
             y = int(i * h)
             painter.drawLine(0, y, grid_pixmap.width(), y)
@@ -117,10 +163,12 @@ class ImageSplitter(QWidget):
         self.image_label.setPixmap(grid_pixmap)
 
     def select_folder(self):  
-        folder = QFileDialog.getExistingDirectory(self, "Select output folder")  
+        start_dir = self.output_dir if self.output_dir else ""
+        folder = QFileDialog.getExistingDirectory(self, "Select output folder", start_dir)  
         if folder:  
             self.output_dir = folder  
             self.label_folder.setText(folder)
+            self.save_settings()
 
     def get_unique_filename(self, output_dir, base_name, extension):
         """Generate unique filename by adding _1, _2, etc. if needed"""
@@ -161,7 +209,9 @@ class ImageSplitter(QWidget):
                     count += 1  
 
             QMessageBox.information(self, "Completed", 
-                                  f"{saved_count} images saved in {self.output_dir}") 
+                                  f"{saved_count} images saved in {self.output_dir}\n"
+                                  f"(unique names generated automatically)") 
+            self.save_settings()
         except Exception as e:
             QMessageBox.warning(self, "Error", f"Save error: {str(e)}")
 
