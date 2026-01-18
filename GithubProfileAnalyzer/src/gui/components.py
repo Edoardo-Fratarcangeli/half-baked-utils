@@ -16,7 +16,7 @@ class PieChartCanvas(FigureCanvas):
                 autopct="%1.1f%%",
                 startangle=140
             )
-            self.ax.set_title(f"Linguaggi GitHub – {username}")
+            self.ax.set_title(f"GitHub Languages – {username}")
         else:
              self.ax.text(0.5, 0.5, "No Data", ha='center', va='center')
         self.draw()

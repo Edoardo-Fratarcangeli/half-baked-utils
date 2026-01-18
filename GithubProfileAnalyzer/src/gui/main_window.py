@@ -16,7 +16,7 @@ from .components import PieChartCanvas
 class SettingsDialog(QDialog):
     def __init__(self, parent=None, name="", site="", target=""):
         super().__init__(parent)
-        self.setWindowTitle("Impostazioni Analisi")
+        self.setWindowTitle("Analysis Settings")
         self.setModal(True)
         self.resize(800, 200)
 
@@ -27,13 +27,13 @@ class SettingsDialog(QDialog):
         self.site_input = QLineEdit(site)
         self.target_input = QLineEdit(target)
 
-        form_layout.addRow("Nome Autore:", self.name_input)
-        form_layout.addRow("Sito Web:", self.site_input)
+        form_layout.addRow("Author Name:", self.name_input)
+        form_layout.addRow("Website:", self.site_input)
         form_layout.addRow("Target Role:", self.target_input)
 
         layout.addLayout(form_layout)
 
-        save_btn = QPushButton("Salva")
+        save_btn = QPushButton("Save")
         save_btn.clicked.connect(self.accept)
         layout.addWidget(save_btn)
 
@@ -56,9 +56,9 @@ class MainWindow(QWidget):
         
         if not self.token:
             QMessageBox.warning(
-                self, "Attenzione",
-                "Nessun GitHub Token trovato (Env o Git Credential).\n"
-                "L'analisi potrebbe fallire se non configuri un token."
+                self, "Warning",
+                "No GitHub Token found (Env or Git Credential).\n"
+                "Analysis might fail without a configured token."
             )
 
         self.client = GitHubClient(self.token) if self.token else None
@@ -82,13 +82,13 @@ class MainWindow(QWidget):
         # Settings Button
         self.settings_btn = QPushButton("⚙")
         self.settings_btn.setFixedSize(40, 40)
-        self.settings_btn.setToolTip("Impostazioni (Autore, Target Role)")
+        self.settings_btn.setToolTip("Settings (Author, Target Role)")
         self.settings_btn.clicked.connect(self.open_settings)
         top_bar.addWidget(self.settings_btn)
 
         # URL Input
         self.url_input = QLineEdit()
-        self.url_input.setPlaceholderText("Inserisci URL GitHub (es. https://github.com/torvalds)")
+        self.url_input.setPlaceholderText("Enter GitHub URL (e.g. https://github.com/torvalds)")
         top_bar.addWidget(self.url_input)
 
         layout.addLayout(top_bar)
@@ -96,7 +96,7 @@ class MainWindow(QWidget):
         # --- Action Buttons ---
         buttons = QHBoxLayout()
 
-        self.analyze_btn = QPushButton("Analizza profilo")
+        self.analyze_btn = QPushButton("Analyze Profile")
         self.analyze_btn.clicked.connect(self.analyze)
 
         self.export_btn = QPushButton("Export PDF")
@@ -109,13 +109,13 @@ class MainWindow(QWidget):
         layout.addLayout(buttons)
 
         # Summary
-        self.summary_label = QLabel("Nessun profilo analizzato")
+        self.summary_label = QLabel("No profile analyzed")
         layout.addWidget(self.summary_label)
 
         # Table
         self.table = QTableWidget(0, 3)
         self.table.setHorizontalHeaderLabels(
-            ["Linguaggio", "Bytes", "Percentuale"]
+            ["Language", "Bytes", "Percentage"]
         )
         self.table.horizontalHeader().setSectionResizeMode(
             QHeaderView.Stretch
@@ -147,12 +147,12 @@ class MainWindow(QWidget):
 
     def analyze(self):
         if not self.client:
-             QMessageBox.critical(self, "Errore Token", "Token non configurato. Impossibile analizzare.")
+             QMessageBox.critical(self, "Token Error", "Token not configured. Cannot analyze.")
              return
 
         url = self.url_input.text().strip()
         if not url:
-            QMessageBox.warning(self, "Url Mancante", "Inserisci un URL o uno username.")
+            QMessageBox.warning(self, "Missing URL", "Please enter a URL or username.")
             return
 
         # Extract username from URL
@@ -171,13 +171,13 @@ class MainWindow(QWidget):
         try:
             raw = self.client.fetch_profile(username)
         except Exception as e:
-            QMessageBox.critical(self, "Errore API", str(e))
+            QMessageBox.critical(self, "API Error", str(e))
             return
 
         self.df, self.commit_total = process_profile_data(raw)
 
         if self.df is None or self.df.empty:
-            QMessageBox.warning(self, "Nessun dato utile", "Profilo vuoto o errore dati")
+            QMessageBox.warning(self, "No Useful Data", "Empty profile or data error")
             return
 
         # Update labels
@@ -185,7 +185,7 @@ class MainWindow(QWidget):
         display_author = self.author_name if self.author_name else "Guest"
         
         self.summary_label.setText(
-            f"Analisi di {username} (by {display_author}) | Target: {display_target} | Commit: {self.commit_total}"
+            f"Analysis of {username} (by {display_author}) | Target: {display_target} | Commit: {self.commit_total}"
         )
 
         self.table.setRowCount(len(self.df))
@@ -201,7 +201,7 @@ class MainWindow(QWidget):
 
     def export_pdf(self):
         path, _ = QFileDialog.getSaveFileName(
-            self, "Esporta PDF", "", "PDF (*.pdf)"
+            self, "Export PDF", "", "PDF (*.pdf)"
         )
         if not path:
             return
@@ -230,9 +230,9 @@ class MainWindow(QWidget):
 
         try:
             generate_pdf(data, tmp_chart, path)
-            QMessageBox.information(self, "PDF creato", "Export completato con successo")
+            QMessageBox.information(self, "PDF Created", "Export completed successfully")
         except Exception as e:
-             QMessageBox.critical(self, "Errore Export", str(e))
+             QMessageBox.critical(self, "Export Error", str(e))
         finally:
             if os.path.exists(tmp_chart):
                 os.remove(tmp_chart)
