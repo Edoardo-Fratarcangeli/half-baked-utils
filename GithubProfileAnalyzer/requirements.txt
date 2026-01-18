@@ -1,0 +1,5 @@
+requests
+pandas
+matplotlib
+PyQt5
+reportlab

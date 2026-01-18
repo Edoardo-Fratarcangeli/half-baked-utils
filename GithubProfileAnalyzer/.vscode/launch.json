@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: GitHub Analyzer",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.py",
+            "console": "integratedTerminal",
+            "env": {
+                "GITHUB_TOKEN": "${env:GITHUB_TOKEN}"
+            }
+        }
+    ]
+}
