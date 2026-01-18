@@ -3,7 +3,8 @@ import sys
 from PyQt5.QtWidgets import (
     QWidget, QLabel, QLineEdit, QPushButton,
     QVBoxLayout, QHBoxLayout, QMessageBox, QTableWidget,
-    QTableWidgetItem, QHeaderView, QFileDialog, QDialog, QFormLayout
+    QTableWidgetItem, QHeaderView, QFileDialog, QDialog, QFormLayout,
+    QSpinBox
 )
 from PyQt5.QtCore import Qt
 
@@ -11,10 +12,10 @@ from ..client import GitHubClient
 from ..analysis import process_profile_data
 from ..utils.pdf_exporter import generate_pdf
 from ..utils.git_helper import get_user_info, get_git_token
-from .components import PieChartCanvas
+from .components import AnalysisChartCanvas
 
 class SettingsDialog(QDialog):
-    def __init__(self, parent=None, name="", site="", target=""):
+    def __init__(self, parent=None, name="", site="", target="", threshold=3):
         super().__init__(parent)
         self.setWindowTitle("Analysis Settings")
         self.setModal(True)
@@ -26,10 +27,15 @@ class SettingsDialog(QDialog):
         self.name_input = QLineEdit(name)
         self.site_input = QLineEdit(site)
         self.target_input = QLineEdit(target)
+        self.threshold_input = QSpinBox()
+        self.threshold_input.setRange(0, 100)
+        self.threshold_input.setValue(threshold)
+        self.threshold_input.setSuffix("%")
 
         form_layout.addRow("Author Name:", self.name_input)
         form_layout.addRow("Website:", self.site_input)
         form_layout.addRow("Target Role:", self.target_input)
+        form_layout.addRow("Others Threshold:", self.threshold_input)
 
         layout.addLayout(form_layout)
 
@@ -43,7 +49,8 @@ class SettingsDialog(QDialog):
         return (
             self.name_input.text().strip(),
             self.site_input.text().strip(),
-            self.target_input.text().strip()
+            self.target_input.text().strip(),
+            self.threshold_input.value()
         )
 
 class MainWindow(QWidget):
@@ -69,6 +76,7 @@ class MainWindow(QWidget):
         self.author_name = ""
         self.author_site = ""
         self.target_role = ""
+        self.threshold = 3
 
         self._build_ui()
         self._prefill_settings()
@@ -123,7 +131,7 @@ class MainWindow(QWidget):
         layout.addWidget(self.table)
 
         # Chart
-        self.chart = PieChartCanvas()
+        self.chart = AnalysisChartCanvas()
         layout.addWidget(self.chart)
 
         self.setLayout(layout)
@@ -140,10 +148,11 @@ class MainWindow(QWidget):
             self, 
             name=self.author_name, 
             site=self.author_site, 
-            target=self.target_role
+            target=self.target_role,
+            threshold=self.threshold
         )
         if dialog.exec_() == QDialog.Accepted:
-            self.author_name, self.author_site, self.target_role = dialog.get_values()
+            self.author_name, self.author_site, self.target_role, self.threshold = dialog.get_values()
 
     def analyze(self):
         if not self.client:
@@ -196,7 +205,7 @@ class MainWindow(QWidget):
                 row, 2, QTableWidgetItem(f"{r['percentage']:.2f}%")
             )
 
-        self.chart.plot_languages(self.df, username)
+        self.chart.plot_languages(self.df, username, threshold=self.threshold)
         self.export_btn.setEnabled(True)
 
     def export_pdf(self):
@@ -225,7 +234,8 @@ class MainWindow(QWidget):
             'username': username,
             'target': self.target_role,
             'commit_total': self.commit_total,
-            'df': self.df
+            'df': self.df,
+            'threshold': self.threshold
         }
 
         try:
